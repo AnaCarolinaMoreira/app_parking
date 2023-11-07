@@ -1,15 +1,12 @@
-import 'package:app_parking/app/modules/parking/infra/models/truck_model.dart';
+import 'package:app_parking/app/common/buttons.dart';
+import 'package:app_parking/app/common/colors.dart';
 import 'package:app_parking/app/modules/parking/infra/models/truck_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddParkedAlertDialog extends StatefulWidget {
-  // final Truck truck;
   const AddParkedAlertDialog({
     Key? key,
-    // required this.truck,
   }) : super(key: key);
 
   @override
@@ -17,15 +14,8 @@ class AddParkedAlertDialog extends StatefulWidget {
 }
 
 class _AddParkedAlertDialogState extends State<AddParkedAlertDialog> {
-  //vaga
-  // final TextEditingController numberParkedController = TextEditingController();
-  final List<String> sideTag = ['A', 'B'];
-  String selectedValue = '';
-
-//caminhao
+  final TextEditingController numberParkedController = TextEditingController();
   final TextEditingController plateTruckController = TextEditingController();
-  // String inputTime = '';
-  // String exitTime = '';
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +24,9 @@ class _AddParkedAlertDialogState extends State<AddParkedAlertDialog> {
     return AlertDialog(
       scrollable: true,
       title: const Text(
-        'Adicionar vagas ao estacionamento',
+        'Adicionar entrada',
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 16, color: Colors.brown),
+        style: TextStyle(fontSize: 20, color: AppColors.greenShadeColor),
       ),
       content: SizedBox(
         height: height * 0.35,
@@ -46,80 +36,75 @@ class _AddParkedAlertDialogState extends State<AddParkedAlertDialog> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              const Text(
-                'Selecione o lado que deseja adicionar\n a vagas sera adicionada\n ao lado A ou labo B',
-                style: TextStyle(fontSize: 14),
-                textAlign: TextAlign.center,
-              ),
-              Row(
-                children: <Widget>[
-                  const Icon(CupertinoIcons.tag, color: Colors.brown),
-                  const SizedBox(width: 15.0),
-                  Expanded(
-                    child: DropdownButtonFormField2(
-                      decoration: InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                      isExpanded: true,
-                      hint: const Text(
-                        'Selecione lado A ou labo B',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      buttonHeight: 60,
-                      buttonPadding: const EdgeInsets.only(left: 20, right: 10),
-                      dropdownDecoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      validator: (value) => value == null ? 'Por favor selecione um lado' : null,
-                      items: sideTag
-                          .map(
-                            (item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (String? value) => setState(
-                        () {
-                          if (value != null) selectedValue = value;
-                        },
-                      ),
+              TextFormField(
+                controller: plateTruckController,
+                style: const TextStyle(fontSize: 14),
+                decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 20,
                     ),
-                  ),
-                ],
+                    // icon: const Icon(CupertinoIcons.square_list, color: Colors.black),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    hintText: 'Digite a placa do caminhão'),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: numberParkedController,
+                style: const TextStyle(fontSize: 14),
+                decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 20,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    hintText: 'Digite o numero da vaga'),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '*Data e a hora da entrada serão salvos automaticamente',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w700),
               ),
             ],
           ),
         ),
       ),
       actions: [
-        ElevatedButton(
+        FlatElevatedIconButton(
           onPressed: () {
             Navigator.of(context, rootNavigator: true).pop();
           },
-          style: ElevatedButton.styleFrom(
-            primary: Colors.grey,
-          ),
-          child: const Text('Cancel'),
+          width: MediaQuery.of(context).size.width,
+          text: 'Cancelar',
+          backgroundColor: Colors.white,
+          borderColor: AppColors.blueShadeColor,
+          textColor: AppColors.blueShadeColor,
+          margin: const EdgeInsets.only(top: 8),
         ),
-        ElevatedButton(
-          onPressed: selectedValue.isNotEmpty
-              ? () {
-                  _addTasks(
-                      truck: Truck(numberParked: '', side: selectedValue, parkedStatus: 'livre', plateTruck: '', entryTime: DateTime.now.toString(), departureTime: null, id: ''));
-                  Navigator.of(context, rootNavigator: true).pop();
-                }
-              : null,
-          child: const Text('Save'),
+        FlatElevatedIconButton(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          onPressed: () {
+            _addTasks(
+                truck: Truck(
+              numberParked: numberParkedController.text,
+              side: '',
+              parkedStatus: 'ocupado',
+              plateTruck: plateTruckController.text,
+              entryTime: '${DateTime.now().hour}:${DateTime.now().minute} ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+              departureTime: '',
+              id: '',
+            ));
+            Navigator.of(context, rootNavigator: true).pop();
+          },
+          width: MediaQuery.of(context).size.width,
+          text: 'Salvar',
+          backgroundColor: AppColors.blueShadeColor,
+          textColor: Colors.white,
         ),
       ],
     );
@@ -132,8 +117,8 @@ class _AddParkedAlertDialogState extends State<AddParkedAlertDialog> {
         'side': truck.side,
         'parkedStatus': truck.parkedStatus,
         'plateTruck': truck.plateTruck,
-        'entryTime': truck.entryTime.toString(),
-        'exitTime': truck.departureTime.toString(),
+        'entryTime': truck.entryTime != null ? truck.entryTime.toString() : '',
+        'departureTime': truck.departureTime != null ? truck.departureTime.toString() : '',
       },
     );
     String truckId = docRef.id;

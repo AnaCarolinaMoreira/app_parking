@@ -1,7 +1,7 @@
+import 'package:app_parking/app/common/colors.dart';
 import 'package:app_parking/app/modules/historic/presenter/screens/historic_screen.dart';
 import 'package:app_parking/app/modules/home/presenter/widget/add_parked_dialog.dart';
-import 'package:app_parking/app/modules/parking/presenter/screens/garage_screnn.dart';
-import 'package:app_parking/app/modules/parking/presenter/screens/parking_screen.dart';
+import 'package:app_parking/app/modules/parking/presenter/screens/garage_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.blueShadeColor,
         centerTitle: true,
         title: Text(_selectedIndex == 0 ? 'Estacionamento' : "Histórico"),
         actions: [
@@ -32,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
       extendBody: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColors.blueShadeColor,
         onPressed: () {
           showDialog(
             context: context,
@@ -50,8 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
           height: kBottomNavigationBarHeight,
           child: BottomNavigationBar(
             currentIndex: _selectedIndex,
-            selectedItemColor: Colors.brown,
-            unselectedItemColor: Colors.black,
+            selectedItemColor: AppColors.blueShadeColor,
+            unselectedItemColor: Colors.grey,
             onTap: (index) {
               setState(() {
                 _selectedIndex = index;
